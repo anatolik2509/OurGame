@@ -11,7 +11,10 @@ public class GameSession {
 
     private final List<Player> players;
 
+    private int turn;
+
     public GameSession(){
+        turn = 0;
         players = new ArrayList<>();
     }
 
@@ -24,6 +27,8 @@ public class GameSession {
             return new PlayerController(p, this);
         }
     }
+
+    //todo game process
 
     public List<Player> getPlayers() {
         return players;

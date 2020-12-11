@@ -20,6 +20,10 @@ public class GameMap {
         //todo fields
     }
 
+    public void movePlayer(Player p, int steps){
+        //todo fields
+    }
+
     public int getPlayerPosition(Player p){
         return playersPositions.get(p);
     }
