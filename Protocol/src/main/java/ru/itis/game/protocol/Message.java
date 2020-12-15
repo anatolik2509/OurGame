@@ -1,7 +1,41 @@
 package ru.itis.game.protocol;
 
 public class Message {
-    //todo
-    //тут нужно хранить всю инфу о сокетном сообщении, заголовки, отправляемые данные там
-    //желательно сделать так, чтоб из него можно было доставать числа, как из буфера
+    private byte type;
+
+    private byte[] data;
+
+    public Message(byte type, byte[] data){
+        this.type = type;
+        this.data = data;
+    }
+
+    public Message(byte type) {
+        this.type = type;
+        this.data = new byte[0];
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    public void setType(byte type) {
+        this.type = type;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public int getContentLength() {
+        return data.length;
+    }
+
+    public String getDataAsString(){
+        return new String(data);
+    }
 }

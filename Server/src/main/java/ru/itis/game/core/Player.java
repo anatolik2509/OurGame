@@ -14,7 +14,7 @@ public class Player {
     private int arrestTurns;
     private int prisonReleases;
 
-    public Player(int character){
+    public Player(int character) {
         this.character = character;
         balance = 2000;
         domain = new ArrayList<>();
@@ -22,7 +22,7 @@ public class Player {
         arrestTurns = 0;
     }
 
-    public Player(int character, GameSession session){
+    public Player(int character, GameSession session) {
         this(character);
         this.session = session;
     }
@@ -55,48 +55,47 @@ public class Player {
         this.arrestTurns = arrestTurns;
     }
 
-    public void addRelease(){
+    public void addRelease() {
         prisonReleases++;
     }
 
-    public void useRelease(){
-        if(prisonReleases > 0){
+    public void useRelease() {
+        if (prisonReleases > 0) {
             prisonReleases--;
         }
     }
 
-    public void receive(int money){
+    public void receive(int money) {
         balance += money;
     }
 
-    public boolean pay(int money){
-        if(balance < money){
+    public boolean pay(int money) {
+        if (balance < money) {
             return false;
-        }
-        else {
+        } else {
             balance -= money;
             return true;
         }
     }
 
-    public void takeAway(int money){
+    public void takeAway(int money) {
         balance -= money;
     }
 
-    public void addField(PurchasableField field){
+    public void addField(PurchasableField field) {
         field.setOwner(this);
         domain.add(field);
     }
 
-    public boolean removeField(PurchasableField field){
-        if(domain.remove(field)){
+    public boolean removeField(PurchasableField field) {
+        if (domain.remove(field)) {
             field.setOwner(null);
             return true;
         }
         return false;
     }
 
-    public boolean isOwner(PurchasableField field){
+    public boolean isOwner(PurchasableField field) {
         return domain.contains(field);
     }
 

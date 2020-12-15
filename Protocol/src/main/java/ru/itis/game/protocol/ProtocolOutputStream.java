@@ -1,19 +1,30 @@
 package ru.itis.game.protocol;
 
+import ru.itis.antonov.chat.utils.Message;
+import ru.itis.antonov.chat.utils.Protocol;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class ProtocolOutputStream extends OutputStream {
-    OutputStream outputStream;
+    private OutputStream outputStream;
 
     public ProtocolOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
-    public void sendMessage(Message m){
-        //todo
-        //тут надо реализовать логику отправки сообщения в outputStream
-        //я от вас ожидаю,что вы помните декораторы))
+    public void writeMessage(Message message) throws IOException {
+        byte type = message.getType();
+        if (message.getContentLength() > Protocol.MAX_MESSAGE_LENGTH) {
+            return;
+        }
+        byte[] data = message.getData();
+        int length = data.length;
+        outputStream.write(type);
+        outputStream.write(length >> 8);
+        outputStream.write(length);
+        outputStream.write(data);
+        outputStream.flush();
     }
 
     @Override

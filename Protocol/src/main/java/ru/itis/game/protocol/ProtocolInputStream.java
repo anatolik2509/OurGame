@@ -1,5 +1,8 @@
 package ru.itis.game.protocol;
 
+import ru.itis.antonov.chat.utils.Message;
+import ru.itis.antonov.chat.utils.Protocol;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,11 +13,22 @@ public class ProtocolInputStream extends InputStream {
         this.inputStream = inputStream;
     }
 
-    public Message readMessage(){
-        //todo
-        //тут надо реализовать логику чтения сообщения из inputStream
-        //я от вас ожидаю,что вы помните декораторы))
-        return null;
+    public Message readMessage() throws IOException {
+        int type = -1;
+        int length;
+        byte[] buffer;
+        if ((type = inputStream.read()) == -1) {
+            return null;
+        }
+        length = (inputStream.read() << 8) + inputStream.read();
+        if (length > Protocol.MAX_MESSAGE_LENGTH) {
+            Message incorrectMessage = new Message(Protocol.SEND_ERROR, new byte[0]);
+            inputStream.skip(length);
+            return incorrectMessage;
+        }
+        buffer = new byte[length];
+        inputStream.read(buffer);
+        return new Message((byte) type, buffer);
     }
 
     @Override
