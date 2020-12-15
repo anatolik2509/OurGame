@@ -1,6 +1,9 @@
 package ru.itis.game.core.fields;
 
+import ru.itis.game.core.GameSession;
 import ru.itis.game.core.Player;
+
+import java.util.List;
 
 public class StationField extends PurchasableField{
 
@@ -11,7 +14,8 @@ public class StationField extends PurchasableField{
     private static final int DEFAULT_MORTGAGE_COST = 200;
     private static final int DEFAULT_UNMORTGAGE_COST = 200;
 
-    public StationField(String name) {
+    public StationField(String name, GameSession session) {
+        super(session);
         this.name = name;
     }
 
@@ -32,7 +36,31 @@ public class StationField extends PurchasableField{
 
     @Override
     public void stop(Player p) {
-        //todo
+        if(p != getOwner() && getOwner() != null) {
+            List<StationField> fields = session.getGameMap().stations();
+            int n = 0;
+            for (StationField f : fields) {
+                if (f.getOwner() == getOwner()) {
+                    n++;
+                }
+            }
+            if(n == 1){
+                p.takeAway(25);
+                getOwner().receive(25);
+            }
+            if(n == 2){
+                p.takeAway(50);
+                getOwner().receive(50);
+            }
+            if(n == 3){
+                p.takeAway(100);
+                getOwner().receive(100);
+            }
+            if(n == 4){
+                p.takeAway(200);
+                getOwner().receive(200);
+            }
+        }
     }
 
     public String getName() {

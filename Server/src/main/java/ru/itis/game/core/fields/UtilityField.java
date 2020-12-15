@@ -1,6 +1,9 @@
 package ru.itis.game.core.fields;
 
+import ru.itis.game.core.GameSession;
 import ru.itis.game.core.Player;
+
+import java.util.List;
 
 public class UtilityField extends PurchasableField{
 
@@ -11,7 +14,8 @@ public class UtilityField extends PurchasableField{
     private static final int DEFAULT_MORTGAGE_COST = 200;
     private static final int DEFAULT_UNMORTGAGE_COST = 200;
 
-    public UtilityField(String name) {
+    public UtilityField(String name, GameSession session) {
+        super(session);
         this.name = name;
     }
 
@@ -32,6 +36,22 @@ public class UtilityField extends PurchasableField{
 
     @Override
     public void stop(Player p) {
-        //todo
+        if(p != getOwner() && getOwner() != null) {
+            List<UtilityField> fields = session.getGameMap().utilities();
+            int n = 0;
+            for (UtilityField f : fields) {
+                if (f.getOwner() == getOwner()) {
+                    n++;
+                }
+            }
+            if(n == 1){
+                p.takeAway(4 * session.getDiceSum());
+                getOwner().receive(4 * session.getDiceSum());
+            }
+            if(n == 2){
+                p.takeAway(10 * session.getDiceSum());
+                getOwner().receive(10 * session.getDiceSum());
+            }
+        }
     }
 }

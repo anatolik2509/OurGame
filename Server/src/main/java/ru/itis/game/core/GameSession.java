@@ -13,6 +13,9 @@ public class GameSession {
 
     private int turn;
 
+    private int dice1;
+    private int dice2;
+
     public GameSession(){
         turn = 0;
         players = new ArrayList<>();
@@ -32,5 +35,17 @@ public class GameSession {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public int getDiceSum(){
+        return dice1 + dice2;
     }
 }

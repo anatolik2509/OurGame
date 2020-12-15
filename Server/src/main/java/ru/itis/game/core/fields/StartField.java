@@ -3,8 +3,8 @@ package ru.itis.game.core.fields;
 import ru.itis.game.core.GameSession;
 import ru.itis.game.core.Player;
 
-public class FreeParkingField extends MapField{
-    public FreeParkingField(GameSession session) {
+public class StartField extends MapField {
+    public StartField(GameSession session) {
         super(session);
     }
 
