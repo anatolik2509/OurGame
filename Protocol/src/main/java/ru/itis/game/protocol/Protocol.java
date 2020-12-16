@@ -1,6 +1,7 @@
 package ru.itis.game.protocol;
 
 public enum Protocol {
+    SEND_ERROR(0),
     START_OF_TURN(1),
     END_OF_TURN(2),
     PURCHASE(3),
@@ -12,7 +13,9 @@ public enum Protocol {
     PUBLIC_TREASURY(9),
     BALANCE_CHANGE(10);
 
-    private int messageNum;
+    public static final int MAX_MESSAGE_LENGTH = 255;
+
+    private final int messageNum;
 
     public int getMessageNum() {
         return messageNum;

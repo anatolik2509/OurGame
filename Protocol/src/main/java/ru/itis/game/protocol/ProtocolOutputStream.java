@@ -1,8 +1,5 @@
 package ru.itis.game.protocol;
 
-import ru.itis.antonov.chat.utils.Message;
-import ru.itis.antonov.chat.utils.Protocol;
-
 import java.io.IOException;
 import java.io.OutputStream;
 

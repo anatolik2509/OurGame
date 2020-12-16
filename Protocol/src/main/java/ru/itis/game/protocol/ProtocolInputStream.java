@@ -1,8 +1,5 @@
 package ru.itis.game.protocol;
 
-import ru.itis.antonov.chat.utils.Message;
-import ru.itis.antonov.chat.utils.Protocol;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -22,7 +19,7 @@ public class ProtocolInputStream extends InputStream {
         }
         length = (inputStream.read() << 8) + inputStream.read();
         if (length > Protocol.MAX_MESSAGE_LENGTH) {
-            Message incorrectMessage = new Message(Protocol.SEND_ERROR, new byte[0]);
+            Message incorrectMessage = new Message((byte)Protocol.SEND_ERROR.getMessageNum(), new byte[0]);
             inputStream.skip(length);
             return incorrectMessage;
         }
