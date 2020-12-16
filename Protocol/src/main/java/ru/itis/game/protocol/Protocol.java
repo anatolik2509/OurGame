@@ -13,15 +13,15 @@ public enum Protocol {
     PUBLIC_TREASURY(9),
     BALANCE_CHANGE(10);
 
-    public static final int MAX_MESSAGE_LENGTH = 255;
+    public static final int MAX_ACTION_LENGTH = 255;
 
-    private final int messageNum;
+    private final int actionType;
 
-    public int getMessageNum() {
-        return messageNum;
+    public int getActionType() {
+        return actionType;
     }
 
-    Protocol(int messageNum) {
-        this.messageNum = messageNum;
+    Protocol(int actionType) {
+        this.actionType = actionType;
     }
 }

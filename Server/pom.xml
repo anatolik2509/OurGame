@@ -7,6 +7,14 @@
     <groupId>ru.itis.game</groupId>
     <artifactId>Server</artifactId>
     <version>1.0</version>
+    <dependencies>
+        <dependency>
+            <groupId>ru.itis.game</groupId>
+            <artifactId>Protocol</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

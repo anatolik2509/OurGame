@@ -10,12 +10,12 @@ public class ProtocolOutputStream extends OutputStream {
         this.outputStream = outputStream;
     }
 
-    public void writeMessage(Message message) throws IOException {
-        byte type = message.getType();
-        if (message.getContentLength() > Protocol.MAX_MESSAGE_LENGTH) {
+    public void writeAction(Action action) throws IOException {
+        byte type = action.getType();
+        if (action.getContentLength() > Protocol.MAX_ACTION_LENGTH) {
             return;
         }
-        byte[] data = message.getData();
+        byte[] data = action.getData();
         int length = data.length;
         outputStream.write(type);
         outputStream.write(length >> 8);
