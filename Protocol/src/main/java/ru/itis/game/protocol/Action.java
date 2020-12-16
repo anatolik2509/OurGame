@@ -1,16 +1,16 @@
 package ru.itis.game.protocol;
 
-public class Message {
+public class Action {
     private byte type;
 
     private byte[] data;
 
-    public Message(byte type, byte[] data){
+    public Action(byte type, byte[] data){
         this.type = type;
         this.data = data;
     }
 
-    public Message(byte type) {
+    public Action(byte type) {
         this.type = type;
         this.data = new byte[0];
     }

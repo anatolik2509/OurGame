@@ -10,7 +10,7 @@ public class ProtocolInputStream extends InputStream {
         this.inputStream = inputStream;
     }
 
-    public Message readMessage() throws IOException {
+    public Action readAction() throws IOException {
         int type = -1;
         int length;
         byte[] buffer;
@@ -18,14 +18,14 @@ public class ProtocolInputStream extends InputStream {
             return null;
         }
         length = (inputStream.read() << 8) + inputStream.read();
-        if (length > Protocol.MAX_MESSAGE_LENGTH) {
-            Message incorrectMessage = new Message((byte)Protocol.SEND_ERROR.getMessageNum(), new byte[0]);
+        if (length > Protocol.MAX_ACTION_LENGTH) {
+            Action incorrectAction = new Action((byte)Protocol.SEND_ERROR.getActionType(), new byte[0]);
             inputStream.skip(length);
-            return incorrectMessage;
+            return incorrectAction;
         }
         buffer = new byte[length];
         inputStream.read(buffer);
-        return new Message((byte) type, buffer);
+        return new Action((byte) type, buffer);
     }
 
     @Override
