@@ -84,6 +84,10 @@ public class GameMap {
 
     }
 
+    public void startBonus(Player p){
+
+    }
+
     public int getPlayerPosition(Player p){
         return playersPositions.get(p);
     }
