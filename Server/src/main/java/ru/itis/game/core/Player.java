@@ -13,6 +13,7 @@ public class Player {
     private boolean isArrested;
     private int arrestTurns;
     private int prisonReleases;
+    private String nickName;
 
     public Player(int character) {
         this.character = character;
@@ -22,9 +23,10 @@ public class Player {
         arrestTurns = 0;
     }
 
-    public Player(int character, GameSession session) {
+    public Player(int character, GameSession session, String nickname) {
         this(character);
         this.session = session;
+        this.nickName = nickname;
     }
 
     public int getBalance() {
@@ -101,5 +103,9 @@ public class Player {
 
     public List<PurchasableField> getDomain() {
         return domain;
+    }
+
+    public String getNickName() {
+        return nickName;
     }
 }
