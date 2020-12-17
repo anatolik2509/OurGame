@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+    private int id;
     private int balance;
     private int character;
     private List<PurchasableField> domain;

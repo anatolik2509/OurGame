@@ -73,19 +73,50 @@ public class GameMap {
     }
 
     public void movePlayer(Player p, int steps){
-        //todo fields
+        int position = playersPositions.get(p);
+        position += steps;
+        if(position < 0){
+            position += getMapSize();
+        }
+        if(position >= getMapSize()){
+            position %= getMapSize();
+            startBonus(p);
+        }
+        playersPositions.put(p, position);
+        field(position).stop(p);
     }
 
     public void moveDirectlyPlayer(Player p, int position, boolean startBonus){
-        //todo fields
+        int lastPosition = playersPositions.get(p);
+        if(position < lastPosition && startBonus){
+            startBonus(p);
+        }
+        playersPositions.put(p, position);
+        field(position).stop(p);
     }
 
     public void arrestPlayer(Player p){
+        moveDirectlyPlayer(p, getPrisonPosition(), false);
+        p.setArrested(true);
+    }
 
+    public int getPrisonPosition(){
+        MapField f;
+        for(int i = 0; i < mapFields.size(); i++){
+            f = mapFields.get(i);
+            if(f instanceof PrisonField){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public void startBonus(Player p){
+        p.receive(200);
+    }
 
+    public int getMapSize(){
+        return mapFields.size();
     }
 
     public int getPlayerPosition(Player p){

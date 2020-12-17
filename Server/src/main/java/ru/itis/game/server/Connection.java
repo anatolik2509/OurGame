@@ -30,7 +30,7 @@ public class Connection extends Thread {
             ProtocolOutputStream outputStream = new ProtocolOutputStream((socket.getOutputStream()));
             Action action;
         } catch (IOException e) {
-            e.printStackTrace();
+            server.removeConnection(this);
         }
     }
 }
