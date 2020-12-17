@@ -29,7 +29,7 @@ public class Connection extends Thread {
             Action action;
             //TODO connection
         } catch (IOException e) {
-            e.printStackTrace();
+            server.removeConnection(this);
         }
     }
 }
