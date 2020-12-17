@@ -11,9 +11,13 @@ public enum Protocol {
     GO_TO_JAIL(7),
     CHANCE(8),
     PUBLIC_TREASURY(9),
-    BALANCE_CHANGE(10);
+    BALANCE_CHANGE(10),
+    READY(11),
+    CANCEL_READY(12),
+    SET_CHARACTER(13);
 
     public static final int MAX_ACTION_LENGTH = 255;
+    public static final int PORT = 6666;
 
     private final int actionType;
 
