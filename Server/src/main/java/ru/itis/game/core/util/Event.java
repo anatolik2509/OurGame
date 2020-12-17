@@ -6,4 +6,6 @@ public class Event {
     private Player target;
     private int eventType;
     private int value;
+
+
 }
