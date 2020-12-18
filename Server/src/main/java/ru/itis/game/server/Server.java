@@ -51,7 +51,9 @@ public class Server {
         while (true) {
             try {
                 Socket s = server.accept();
-                createConnection(s);
+                if(state == STARTING) {
+                    createConnection(s);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

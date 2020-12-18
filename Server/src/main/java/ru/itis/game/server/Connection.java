@@ -38,7 +38,7 @@ public class Connection extends Thread {
                 ByteBuffer byteBuffer = ByteBuffer.allocate(event.getValue().length + 4);
                 byteBuffer.putInt(event.getTarget() == null ? 0:event.getTarget().getId());
                 byteBuffer.put(event.getValue());
-                byteBuffer.get(bytes);
+                byteBuffer.get(bytes);  
                 outputStream.writeAction(new Action(event.getEventType(), bytes));
             } catch (IOException e) {
                 server.removeConnection(this);
