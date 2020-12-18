@@ -1,0 +1,22 @@
+.game__field {
+    -fx-background-image: url('../images/Board.png');
+    -fx-background-size: cover;
+}
+
+.game__menu {
+    -fx-background-color: #DDD;
+    -fx-border-width: 0 0 0 2px;
+    -fx-border-color: #131313;
+}
+
+.game__menu__text-primary {
+    -fx-font-family: "STIXVariants";
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.game__menu__button {
+    -fx-background-color: #161616;
+    -fx-text-fill: #fff;
+    -fx-cursor: grab;
+}
