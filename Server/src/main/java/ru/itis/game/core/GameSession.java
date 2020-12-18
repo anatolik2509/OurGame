@@ -152,7 +152,7 @@ public class GameSession {
         buffer.putInt(dice2);
         byte[] bytes = new byte[8];
         buffer.get(bytes);
-        initEvent(new Event(null, Protocol.ROLL_DICES, bytes));
+        initEvent(new Event(null, Protocol.DICES_RESPONSE, bytes));
         if(current.isArrested()){
             if(dice1 == dice2){
                 current.setArrested(false);
