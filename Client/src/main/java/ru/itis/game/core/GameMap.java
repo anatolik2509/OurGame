@@ -84,10 +84,6 @@ public class GameMap {
         return 0;
     }
 
-    public void startBonus(Player p){
-        p.receive(200);
-    }
-
     public int getMapSize(){
         return mapFields.size();
     }

@@ -128,6 +128,7 @@ public class GameSession {
             }
         }
         current = players[turn];
+        initEvent(new Event(current, Protocol.NEXT_TURN));
     }
 
     public Server getServer() {

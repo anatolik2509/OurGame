@@ -89,7 +89,6 @@ public class Server {
             for (Connection c : connections){
                 c.setGameSession(gameSession);
                 c.setPlayerController(gameSession.addPlayer(c.getPlayer()));
-                //todo gameSession.addGameListener()
             }
             gameSession.start();
         }
