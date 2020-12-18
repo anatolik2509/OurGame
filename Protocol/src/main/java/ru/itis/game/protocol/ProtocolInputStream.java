@@ -19,7 +19,7 @@ public class ProtocolInputStream extends InputStream {
         }
         length = (inputStream.read() << 8) + inputStream.read();
         if (length > Protocol.MAX_ACTION_LENGTH) {
-            Action incorrectAction = new Action((byte)Protocol.SEND_ERROR.getActionType(), new byte[0]);
+            Action incorrectAction = new Action((byte)Protocol.SEND_ERROR, new byte[0]);
             inputStream.skip(length);
             return incorrectAction;
         }
@@ -59,8 +59,8 @@ public class ProtocolInputStream extends InputStream {
     }
 
     @Override
-    public void mark(int readlimit) {
-        inputStream.mark(readlimit);
+    public void mark(int readLimit) {
+        inputStream.mark(readLimit);
     }
 
     @Override
