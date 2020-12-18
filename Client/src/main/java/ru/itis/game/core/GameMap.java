@@ -3,19 +3,22 @@ package ru.itis.game.core;
 import ru.itis.game.client.Connection;
 import ru.itis.game.core.fields.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameMap {
     private final List<MapField> mapFields;
     private final Map<Player, Integer> playersPositions;
     private final Connection connection;
 
-    public GameMap(Player[] players, Connection connection){
+    public GameMap(Player[] players, Connection connection) {
         this.connection = connection;
         mapFields = new ArrayList<>();
         playersPositions = new HashMap<>();
-        for(Player p : players){
-            if(p != null) {
+        for (Player p : players) {
+            if (p != null) {
                 playersPositions.put(p, 0);
             }
         }
@@ -61,34 +64,34 @@ public class GameMap {
         mapFields.add(new StreetField(StreetField.Street.ARBAT_STREET));
     }
 
-    public void movePlayer(Player p, int steps){
-
-        }
-
-    public void moveDirectlyPlayer(Player p, int position){
+    public void movePlayer(Player p, int steps) {
 
     }
 
-    public void arrestPlayer(Player p){
+    public void moveDirectlyPlayer(Player p, int position) {
 
     }
 
-    public int getPrisonPosition(){
+    public void arrestPlayer(Player p) {
+
+    }
+
+    public int getPrisonPosition() {
         MapField f;
-        for(int i = 0; i < mapFields.size(); i++){
+        for (int i = 0; i < mapFields.size(); i++) {
             f = mapFields.get(i);
-            if(f instanceof PrisonField){
+            if (f instanceof PrisonField) {
                 return i;
             }
         }
         return 0;
     }
 
-    public int getMapSize(){
+    public int getMapSize() {
         return mapFields.size();
     }
 
-    public int getPlayerPosition(Player p){
+    public int getPlayerPosition(Player p) {
         return playersPositions.get(p);
     }
 
@@ -96,15 +99,15 @@ public class GameMap {
         return mapFields;
     }
 
-    public MapField field(int i){
+    public MapField field(int i) {
         return mapFields.get(i);
     }
 
-    public List<StreetField> streetsByColor(int color){
+    public List<StreetField> streetsByColor(int color) {
         List<StreetField> r = new ArrayList<>();
         StreetField streetField;
-        for(MapField f : getMapFields()){
-            if(f instanceof StreetField){
+        for (MapField f : getMapFields()) {
+            if (f instanceof StreetField) {
                 streetField = (StreetField) f;
                 r.add(streetField);
             }
@@ -112,11 +115,11 @@ public class GameMap {
         return r;
     }
 
-    public List<StationField> stations(){
+    public List<StationField> stations() {
         List<StationField> r = new ArrayList<>();
         StationField stationField;
-        for(MapField f : getMapFields()){
-            if(f instanceof StationField){
+        for (MapField f : getMapFields()) {
+            if (f instanceof StationField) {
                 stationField = (StationField) f;
                 r.add(stationField);
             }
@@ -124,11 +127,11 @@ public class GameMap {
         return r;
     }
 
-    public List<UtilityField> utilities(){
+    public List<UtilityField> utilities() {
         List<UtilityField> r = new ArrayList<>();
         UtilityField utilityField;
-        for(MapField f : getMapFields()){
-            if(f instanceof UtilityField){
+        for (MapField f : getMapFields()) {
+            if (f instanceof UtilityField) {
                 utilityField = (UtilityField) f;
                 r.add(utilityField);
             }
@@ -138,29 +141,29 @@ public class GameMap {
 
     public void removePlayer(Player p) {
         playersPositions.remove(p);
-        for(MapField f : mapFields){
-            if(f instanceof PurchasableField){
+        for (MapField f : mapFields) {
+            if (f instanceof PurchasableField) {
                 ((PurchasableField) f).setOwner(null);
-                if(f instanceof StreetField){
+                if (f instanceof StreetField) {
                     ((StreetField) f).setLevel(0);
                 }
             }
         }
     }
 
-    public int fieldIndex(MapField field){
-        for(int i = 0; i < mapFields.size(); i++){
-            if(mapFields.get(i) == field){
+    public int fieldIndex(MapField field) {
+        for (int i = 0; i < mapFields.size(); i++) {
+            if (mapFields.get(i) == field) {
                 return i;
             }
         }
         return -1;
     }
 
-    public void purchaseField(Player p){
+    public void purchaseField(Player p) {
         MapField field = field(playersPositions.get(p));
-        if(field instanceof PurchasableField){
-            if(((PurchasableField) field).getOwner() == null){
+        if (field instanceof PurchasableField) {
+            if (((PurchasableField) field).getOwner() == null) {
                 ((PurchasableField) field).purchase(p);
             }
         }
