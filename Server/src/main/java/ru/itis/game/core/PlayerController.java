@@ -12,5 +12,29 @@ public class PlayerController {
         this.session = session;
     }
 
-    //todo methods
+    public void rollDices(){
+
+    }
+
+    public void connectionLoss(){
+
+    }
+
+    public void endTurn(){
+
+    }
+
+    public void usePrisonRelease(){
+
+    }
+
+    public void purchaseField(){
+
+    }
+
+    public void sendOffer(Player to){
+
+    }
+
+    //todo
 }

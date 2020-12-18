@@ -1,15 +1,18 @@
-
 package ru.itis.game.server;
 
 import ru.itis.game.core.GameSession;
 import ru.itis.game.core.Player;
 import ru.itis.game.core.PlayerController;
+import ru.itis.game.core.util.Event;
 import ru.itis.game.protocol.Action;
 import ru.itis.game.protocol.ProtocolInputStream;
 import ru.itis.game.protocol.ProtocolOutputStream;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+
+import static ru.itis.game.protocol.Protocol.*;
 
 public class Connection extends Thread {
     private final Socket socket;
@@ -17,20 +20,125 @@ public class Connection extends Thread {
     private Player player;
     private PlayerController playerController;
     private GameSession gameSession;
+    private ProtocolInputStream inputStream;
+    private  ProtocolOutputStream outputStream;
 
     public Connection(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
+        try {
+            inputStream = new ProtocolInputStream(socket.getInputStream());
+            outputStream = new ProtocolOutputStream((socket.getOutputStream()));
+        } catch (IOException e){
+            server.removeConnection(this);
+        }
     }
 
     @Override
     public void run() {
         try {
-            ProtocolInputStream inputStream = new ProtocolInputStream(socket.getInputStream());
-            ProtocolOutputStream outputStream = new ProtocolOutputStream((socket.getOutputStream()));
             Action action;
+            while ((action = inputStream.readAction()) != null){
+                switch (action.getType()){
+                    case READY :{
+                        if(server.getState() != Server.STARTING){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        else {
+                            if(player.getCharacter() == -1){
+                                outputStream.writeAction(new Action(NOT_CHOSEN_CHARACTER));
+                            }
+                            else {
+                                server.setReady(this, true);
+                                server.initEvent(new Event(player, READY_RESPONSE));
+                                server.startGame();
+                            }
+                        }
+                        break;
+                    }
+                    case CANCEL_READY: {
+                        if (server.getState() != Server.STARTING) {
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        } else {
+                            server.setReady(this, false);
+                            server.initEvent(new Event(player, CANCEL_READY_RESPONSE));
+                        }
+                        break;
+                    }
+                    case SET_CHARACTER:{
+                        if(server.getState() != Server.STARTING){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        else {
+                            ByteBuffer buffer = ByteBuffer.wrap(action.getData());
+                            int character = buffer.getInt();
+                            if (server.isCharacterOccupied(character)) {
+                                outputStream.writeAction(new Action(CHARACTER_IS_OCCUPIED));
+                            }
+                            else {
+                                player.setCharacter(character);
+                                server.initEvent(new Event(player, SET_CHARACTER, character));
+                            }
+                        }
+                        break;
+                    }
+                    case SET_NICKNAME:{
+                        if(server.getState() != Server.STARTING){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        else {
+                            player.setNickName(action.getDataAsString());
+                            server.initEvent(new Event(player, SET_NICKNAME_RESPONSE, player.getNickName()));
+                        }
+                    }
+                    case REMOVE_PLAYER:{
+                        server.removeConnection(this);
+                        if(playerController != null){
+                            playerController.connectionLoss();
+                        }
+                        socket.close();
+                        break;
+                    }
+                    case ROLL_DICES:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        else {
+                            playerController.rollDices();
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             server.removeConnection(this);
         }
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public PlayerController getPlayerController() {
+        return playerController;
+    }
+
+    public void setPlayerController(PlayerController playerController) {
+        this.playerController = playerController;
+    }
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
+    public void setGameSession(GameSession gameSession) {
+        this.gameSession = gameSession;
+    }
+
+    public void sendAction(Action a) throws IOException {
+        outputStream.writeAction(a);
     }
 }

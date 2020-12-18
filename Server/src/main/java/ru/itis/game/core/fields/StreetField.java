@@ -2,6 +2,8 @@ package ru.itis.game.core.fields;
 
 import ru.itis.game.core.GameSession;
 import ru.itis.game.core.Player;
+import ru.itis.game.core.util.Event;
+import ru.itis.game.protocol.Protocol;
 
 import java.util.List;
 
@@ -90,6 +92,7 @@ public class StreetField extends PurchasableField{
                 p.takeAway(street.rent[0]);
                 getOwner().receive(street.rent[0]);
             }
+            session.initEvent(new Event(p, Protocol.RENT, getOwner().getId()));
         }
     }
 
@@ -120,6 +123,9 @@ public class StreetField extends PurchasableField{
         return level;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     private static final int BROWN = 0;
     private static final int YELLOW = 1;

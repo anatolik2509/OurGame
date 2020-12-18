@@ -1,6 +1,8 @@
 package ru.itis.game.core;
 
 import ru.itis.game.core.fields.*;
+import ru.itis.game.core.util.Event;
+import ru.itis.game.protocol.Protocol;
 
 import java.util.*;
 
@@ -9,16 +11,18 @@ public class GameMap {
     private final Map<Player, Integer> playersPositions;
     private final GameSession session;
 
-    private final Queue<ChanceEvents> chanceQueue;
-    private final Queue<CommunityChestEvents> chestQueue;
+    private final Queue<ChanceEvent> chanceQueue;
+    private final Queue<CommunityChestEvent> chestQueue;
 
 
-    public GameMap(List<Player> players, GameSession session){
+    public GameMap(Player[] players, GameSession session){
         this.session = session;
         mapFields = new ArrayList<>();
         playersPositions = new HashMap<>();
         for(Player p : players){
-            playersPositions.put(p, 0);
+            if(p != null) {
+                playersPositions.put(p, 0);
+            }
         }
         mapFields.add(new StartField(session));
         mapFields.add(new StreetField(StreetField.Street.RESIDENTIAL_STREET, session));
@@ -62,12 +66,12 @@ public class GameMap {
         mapFields.add(new StreetField(StreetField.Street.ARBAT_STREET, session));
 
         chanceQueue = new LinkedList<>();
-        List<ChanceEvents> chanceEvents = Arrays.asList(ChanceEvents.values());
+        List<ChanceEvent> chanceEvents = Arrays.asList(ChanceEvent.values());
         Collections.shuffle(chanceEvents);
         chanceQueue.addAll(chanceEvents);
 
         chestQueue = new LinkedList<>();
-        List<CommunityChestEvents> chestEvents = Arrays.asList(CommunityChestEvents.values());
+        List<CommunityChestEvent> chestEvents = Arrays.asList(CommunityChestEvent.values());
         Collections.shuffle(chanceEvents);
         chestQueue.addAll(chestEvents);
     }
@@ -84,6 +88,7 @@ public class GameMap {
         }
         playersPositions.put(p, position);
         field(position).stop(p);
+        session.initEvent(new Event(p, Protocol.MOVE, steps));
     }
 
     public void moveDirectlyPlayer(Player p, int position, boolean startBonus){
@@ -93,11 +98,14 @@ public class GameMap {
         }
         playersPositions.put(p, position);
         field(position).stop(p);
+        session.initEvent(new Event(p, Protocol.GO_TO, position));
     }
 
     public void arrestPlayer(Player p){
         moveDirectlyPlayer(p, getPrisonPosition(), false);
         p.setArrested(true);
+        session.initEvent(new Event(p, Protocol.GO_TO_PRISON));
+        session.setCanRoll(false);
     }
 
     public int getPrisonPosition(){
@@ -168,10 +176,39 @@ public class GameMap {
     }
 
     public void chance(Player target){
-
+        ChanceEvent event = chanceQueue.poll();
+        chanceQueue.add(event);
+        if (event != null) {
+            event.getEvent().invoke(session, target);
+        }
     }
 
     public void communityChest(Player target){
+        CommunityChestEvent event = chestQueue.poll();
+        chestQueue.add(event);
+        if (event != null) {
+            event.getEvent().invoke(session, target);
+        }
+    }
 
+    public void removePlayer(Player p) {
+        playersPositions.remove(p);
+        for(MapField f : mapFields){
+            if(f instanceof PurchasableField){
+                ((PurchasableField) f).setOwner(null);
+                if(f instanceof StreetField){
+                    ((StreetField) f).setLevel(0);
+                }
+            }
+        }
+    }
+
+    public int fieldIndex(MapField field){
+        for(int i = 0; i < mapFields.size(); i++){
+            if(mapFields.get(i) == field){
+                return i;
+            }
+        }
+        return -1;
     }
 }

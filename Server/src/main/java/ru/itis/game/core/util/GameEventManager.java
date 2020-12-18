@@ -14,7 +14,7 @@ public class GameEventManager {
         gameListenerList.add(gameListener);
     }
 
-    private void activate(Event event) {
+    public void activate(Event event) {
         for (GameListener listener: gameListenerList) {
             listener.activate(event);
         }

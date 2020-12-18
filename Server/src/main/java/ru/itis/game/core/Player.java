@@ -1,12 +1,14 @@
 package ru.itis.game.core;
 
 import ru.itis.game.core.fields.PurchasableField;
+import ru.itis.game.core.util.Event;
+import ru.itis.game.protocol.Protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private int id;
+    private final int id;
     private int balance;
     private int character;
     private List<PurchasableField> domain;
@@ -16,16 +18,18 @@ public class Player {
     private int prisonReleases;
     private String nickName;
 
-    public Player(int character) {
-        this.character = character;
+    public Player(int id) {
+        this.id = id;
         balance = 2000;
         domain = new ArrayList<>();
         isArrested = false;
         arrestTurns = 0;
+        character = -1;
     }
 
-    public Player(int character, GameSession session, String nickname) {
-        this(character);
+    public Player(int character, int id, GameSession session, String nickname) {
+        this(id);
+        this.character = character;
         this.session = session;
         this.nickName = nickname;
     }
@@ -62,14 +66,20 @@ public class Player {
         prisonReleases++;
     }
 
-    public void useRelease() {
+    public boolean useRelease() {
         if (prisonReleases > 0) {
+            session.initEvent(new Event(this, Protocol.USE_PRISON_RELEASE));
+            arrestTurns = 0;
+            isArrested = false;
             prisonReleases--;
+            return true;
         }
+        return false;
     }
 
     public void receive(int money) {
         balance += money;
+        session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
     }
 
     public boolean pay(int money) {
@@ -77,22 +87,26 @@ public class Player {
             return false;
         } else {
             balance -= money;
+            session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
             return true;
         }
     }
 
     public void takeAway(int money) {
         balance -= money;
+        session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
     }
 
     public void addField(PurchasableField field) {
         field.setOwner(this);
+        session.initEvent(new Event(this, Protocol.SET_OWNER, session.getGameMap().fieldIndex(field)));
         domain.add(field);
     }
 
     public boolean removeField(PurchasableField field) {
         if (domain.remove(field)) {
             field.setOwner(null);
+            session.initEvent(new Event(null, Protocol.SET_OWNER, session.getGameMap().fieldIndex(field)));
             return true;
         }
         return false;
@@ -109,4 +123,26 @@ public class Player {
     public String getNickName() {
         return nickName;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setSession(GameSession session) {
+        this.session = session;
+    }
+
+    public void setCharacter(int character) {
+        this.character = character;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void increaseArrestedTurns(){
+        arrestTurns++;
+    }
+
+
 }
