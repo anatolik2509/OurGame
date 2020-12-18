@@ -6,29 +6,29 @@ import java.nio.ByteBuffer;
 
 public class Event {
     private Player target;
-    private int eventType;
+    private byte eventType;
     private byte[] value;
 
-    public Event(Player target, int eventType, byte[] value) {
+    public Event(Player target, byte eventType, byte[] value) {
         this.target = target;
         this.eventType = eventType;
         this.value = value;
     }
 
-    public Event(Player target, int eventType, int value) {
+    public Event(Player target, byte eventType, int value) {
         this.target = target;
         this.eventType = eventType;
         this.value = new byte[4];
         ByteBuffer.allocate(4).putInt(value).get(this.value);
     }
 
-    public Event(Player target, int eventType, String value) {
+    public Event(Player target, byte eventType, String value) {
         this.target = target;
         this.eventType = eventType;
         this.value = value.getBytes();
     }
 
-    public Event(Player target, int eventType) {
+    public Event(Player target, byte eventType) {
         this.target = target;
         this.eventType = eventType;
     }
@@ -37,7 +37,7 @@ public class Event {
         return target;
     }
 
-    public int getEventType() {
+    public byte getEventType() {
         return eventType;
     }
 

@@ -36,6 +36,10 @@ public class Protocol {
     public static final byte BUILD = 32;
     public static final byte REMOVE = 33;
     public static final byte SET_OWNER = 34;
+    public static final byte BUILD_RESPONSE = 35;
+    public static final byte REMOVE_RESPONSE = 36;
+    public static final byte LAY_DOWN_RESPONSE = 37;
+    public static final byte BUY_BACK_RESPONSE = 38;
 
     public static final int MAX_ACTION_LENGTH = 255;
     public static final int PORT = 6666;

@@ -211,4 +211,13 @@ public class GameMap {
         }
         return -1;
     }
+
+    public void purchaseField(Player p){
+        MapField field = field(playersPositions.get(p));
+        if(field instanceof PurchasableField){
+            if(((PurchasableField) field).getOwner() == null){
+                ((PurchasableField) field).purchase(p);
+            }
+        }
+    }
 }

@@ -32,6 +32,9 @@ public class StreetField extends PurchasableField{
     }
 
     public boolean build(Player p){
+        if (p != getOwner()){
+            return false;
+        }
         if(!checkColors(p, getColor())) return false;
         List<StreetField> fields = session.getGameMap().streetsByColor(getColor());
         for(StreetField f : fields){
@@ -42,12 +45,14 @@ public class StreetField extends PurchasableField{
         if(level < 4){
             if(p.pay(street.getBuildCost())){
                 level++;
+                session.initEvent(new Event(null, Protocol.BUILD_RESPONSE, session.getGameMap().fieldIndex(this)));
                 return true;
             }
         }
         else if(level == 4) {
             if(p.pay(street.getBuildCost() * 5)){
                 level++;
+                session.initEvent(new Event(null, Protocol.BUILD_RESPONSE, session.getGameMap().fieldIndex(this)));
                 return true;
             }
         }
@@ -55,6 +60,9 @@ public class StreetField extends PurchasableField{
     }
 
     public boolean remove(Player p){
+        if (p != getOwner()){
+            return false;
+        }
         if (level == 0) return false;
         List<StreetField> fields = session.getGameMap().streetsByColor(getColor());
         for(StreetField f : fields){
@@ -64,14 +72,13 @@ public class StreetField extends PurchasableField{
         }
         if(level == 5){
             p.receive(street.buildCost * 5 / 2);
-            level--;
-            return true;
         }
         else {
             p.receive(street.buildCost / 2);
-            level--;
-            return true;
         }
+        level--;
+        session.initEvent(new Event(null, Protocol.REMOVE_RESPONSE, session.getGameMap().fieldIndex(this)));
+        return true;
 
     }
 

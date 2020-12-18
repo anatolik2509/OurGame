@@ -28,6 +28,16 @@ public class Offer {
         this.prisonReleasesTo = prisonReleasesTo;
     }
 
+    public Offer(byte[] bytes){
+
+    }
+
+    public boolean check(){
+        if(from.getBalance() < moneyFrom || to.getBalance() < moneyTo){
+            return false;
+        }
+        return true;
+    }
     public Player getFrom() {
         return from;
     }

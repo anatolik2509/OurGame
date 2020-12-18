@@ -21,7 +21,7 @@ public class Connection extends Thread {
     private PlayerController playerController;
     private GameSession gameSession;
     private ProtocolInputStream inputStream;
-    private  ProtocolOutputStream outputStream;
+    private ProtocolOutputStream outputStream;
 
     public Connection(Socket socket, Server server) {
         this.socket = socket;
@@ -32,6 +32,18 @@ public class Connection extends Thread {
         } catch (IOException e){
             server.removeConnection(this);
         }
+        server.addGameListener(event -> {
+            try {
+                byte[] bytes = new byte[event.getValue().length + 4];
+                ByteBuffer byteBuffer = ByteBuffer.allocate(event.getValue().length + 4);
+                byteBuffer.putInt(event.getTarget() == null ? 0:event.getTarget().getId());
+                byteBuffer.put(event.getValue());
+                byteBuffer.get(bytes);
+                outputStream.writeAction(new Action(event.getEventType(), bytes));
+            } catch (IOException e) {
+                server.removeConnection(this);
+            }
+        });
     }
 
     @Override
@@ -94,7 +106,7 @@ public class Connection extends Thread {
                     case REMOVE_PLAYER:{
                         server.removeConnection(this);
                         if(playerController != null){
-                            playerController.connectionLoss();
+                            playerController.exit();
                         }
                         socket.close();
                         break;
@@ -106,6 +118,44 @@ public class Connection extends Thread {
                         else {
                             playerController.rollDices();
                         }
+                    }
+                    case PURCHASE:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        playerController.purchaseField();
+                    }
+                    case LAY_DOWN:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        ByteBuffer buffer = ByteBuffer.wrap(action.getData());
+                        int field = buffer.getInt();
+                        playerController.mortgageField(gameSession.getGameMap().field(field));
+                    }
+                    case BUY_BACK:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        ByteBuffer buffer = ByteBuffer.wrap(action.getData());
+                        int field = buffer.getInt();
+                        playerController.unmortgageField(gameSession.getGameMap().field(field));
+                    }
+                    case BUILD:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        ByteBuffer buffer = ByteBuffer.wrap(action.getData());
+                        int field = buffer.getInt();
+                        playerController.build(gameSession.getGameMap().field(field));
+                    }
+                    case REMOVE:{
+                        if(server.getState() != Server.GAME){
+                            outputStream.writeAction(new Action(SEND_ERROR));
+                        }
+                        ByteBuffer buffer = ByteBuffer.wrap(action.getData());
+                        int field = buffer.getInt();
+                        playerController.remove(gameSession.getGameMap().field(field));
                     }
                 }
             }
