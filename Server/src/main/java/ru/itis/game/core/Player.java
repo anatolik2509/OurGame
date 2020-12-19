@@ -98,18 +98,11 @@ public class Player {
     }
 
     public void addField(PurchasableField field) {
-        field.setOwner(this);
-        session.initEvent(new Event(this, Protocol.SET_OWNER, session.getGameMap().fieldIndex(field)));
         domain.add(field);
     }
 
-    public boolean removeField(PurchasableField field) {
-        if (domain.remove(field)) {
-            field.setOwner(null);
-            session.initEvent(new Event(null, Protocol.SET_OWNER, session.getGameMap().fieldIndex(field)));
-            return true;
-        }
-        return false;
+    public void removeField(PurchasableField field) {
+        domain.remove(field);
     }
 
     public boolean isOwner(PurchasableField field) {

@@ -21,7 +21,7 @@ public abstract class PurchasableField extends MapField {
             return;
         }
         if(p.pay(getCost())){
-            p.addField(this);
+            setOwner(p);
         }
         session.initEvent(new Event(p, Protocol.SET_OWNER, session.getGameMap().fieldIndex(this)));
     }
@@ -60,7 +60,9 @@ public abstract class PurchasableField extends MapField {
     }
 
     public void setOwner(Player owner) {
+        this.owner.removeField(this);
         this.owner = owner;
+        this.owner.addField(this);
     }
 
     public boolean isMortgaged() {

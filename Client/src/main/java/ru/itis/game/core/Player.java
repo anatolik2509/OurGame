@@ -4,6 +4,7 @@ import ru.itis.game.core.fields.PurchasableField;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Player {
     private final int id;
@@ -71,16 +72,11 @@ public class Player {
     }
 
     public void addField(PurchasableField field) {
-        field.setOwner(this);
         domain.add(field);
     }
 
-    public boolean removeField(PurchasableField field) {
-        if (domain.remove(field)) {
-            field.setOwner(null);
-            return true;
-        }
-        return false;
+    public void removeField(PurchasableField field) {
+        domain.remove(field);
     }
 
     public boolean isOwner(PurchasableField field) {
@@ -111,5 +107,16 @@ public class Player {
         arrestTurns++;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return id == player.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

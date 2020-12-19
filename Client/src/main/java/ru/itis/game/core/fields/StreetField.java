@@ -17,12 +17,12 @@ public class StreetField extends PurchasableField{
         level = 0;
     }
 
-    public boolean build(Player p){
-        return false;
+    public void build(){
+        level++;
     }
 
-    public boolean remove(Player p){
-        return false;
+    public void remove(){
+        level--;
     }
 
     @Override

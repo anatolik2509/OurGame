@@ -6,11 +6,13 @@ import ru.itis.game.core.Player;
 import ru.itis.game.core.util.Event;
 import ru.itis.game.core.util.GameEventManager;
 import ru.itis.game.core.util.GameListener;
+import ru.itis.game.protocol.Action;
 import ru.itis.game.protocol.Protocol;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class Server {
 
     public Server() {
         connectionNumber = STARTING;
+        manager = new GameEventManager();
         try {
             server = new ServerSocket(Protocol.PORT);
             connections = new ArrayList<>();
@@ -66,6 +69,37 @@ public class Server {
         isReady.add(false);
         c.setPlayer(new Player(connectionNumber));
         c.start();
+        Action connectAction;
+        String name;
+        ByteBuffer byteBuffer;
+        for(Connection con : connections){
+            byteBuffer = ByteBuffer.allocate(4);
+            byteBuffer.putInt(con.getPlayer().getId());
+            connectAction = new Action(Protocol.ADD_PLAYER, byteBuffer.array());
+            try {
+                c.sendAction(connectAction);
+            } catch (IOException e) {
+                removeConnection(c);
+            }
+            name = con.getPlayer().getNickName();
+            byteBuffer = ByteBuffer.allocate(name.getBytes().length + 4);
+            byteBuffer.putInt(con.getPlayer().getId()).put(name.getBytes());
+            connectAction = new Action(Protocol.SET_NICKNAME_RESPONSE, byteBuffer.array());
+            try {
+                c.sendAction(connectAction);
+            } catch (IOException e) {
+                removeConnection(c);
+            }
+            int character = con.getPlayer().getCharacter();
+            byteBuffer = ByteBuffer.allocate(8);
+            byteBuffer.putInt(con.getPlayer().getId()).putInt(character);
+            connectAction = new Action(Protocol.SET_CHARACTER, byteBuffer.array());
+            try {
+                c.sendAction(connectAction);
+            } catch (IOException e) {
+                removeConnection(c);
+            }
+        }
         initEvent(new Event(null, Protocol.ADD_PLAYER, connectionNumber));
         connectionNumber++;
     }

@@ -10,10 +10,14 @@ import java.util.Map;
 
 public class GameMap {
     private final List<MapField> mapFields;
+    private Player clientPlayer;
     private final Map<Player, Integer> playersPositions;
+    private final Player[] players;
     private final Connection connection;
+    private int dice1;
+    private int dice2;
 
-    public GameMap(Player[] players, Connection connection) {
+    public GameMap(Player[] players, Connection connection, int playerId) {
         this.connection = connection;
         mapFields = new ArrayList<>();
         playersPositions = new HashMap<>();
@@ -21,7 +25,11 @@ public class GameMap {
             if (p != null) {
                 playersPositions.put(p, 0);
             }
+            if(p.getId() == playerId){
+                clientPlayer = p;
+            }
         }
+        this.players = players;
         mapFields.add(new StartField());
         mapFields.add(new StreetField(StreetField.Street.RESIDENTIAL_STREET));
         mapFields.add(new RandomEventsField(RandomEventsField.COMMUNITY_CHEST));
@@ -149,6 +157,11 @@ public class GameMap {
                 }
             }
         }
+        for(int i = 0; i < players.length; i++){
+            if(players[i].equals(p)){
+                players[i] = null;
+            }
+        }
     }
 
     public int fieldIndex(MapField field) {
@@ -167,5 +180,30 @@ public class GameMap {
                 ((PurchasableField) field).purchase(p);
             }
         }
+    }
+
+    public Player getPlayerById(int id){
+        for(Player p : players) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public int getDice1() {
+        return dice1;
+    }
+
+    public void setDice1(int dice1) {
+        this.dice1 = dice1;
+    }
+
+    public int getDice2() {
+        return dice2;
+    }
+
+    public void setDice2(int dice2) {
+        this.dice2 = dice2;
     }
 }

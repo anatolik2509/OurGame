@@ -34,9 +34,15 @@ public class Connection extends Thread {
         }
         server.addGameListener(event -> {
             try {
-                byte[] bytes = new byte[event.getValue().length + 4];
-                ByteBuffer byteBuffer = ByteBuffer.allocate(event.getValue().length + 4);
-                byteBuffer.putInt(event.getTarget() == null ? 0:event.getTarget().getId());
+                int length = event.getValue().length;
+                if(event.getTarget() != null){
+                    length += 4;
+                }
+                byte[] bytes = new byte[length];
+                ByteBuffer byteBuffer = ByteBuffer.allocate(length);
+                if(event.getTarget() != null) {
+                    byteBuffer.putInt(event.getTarget().getId());
+                }
                 byteBuffer.put(event.getValue());
                 byteBuffer.get(bytes);  
                 outputStream.writeAction(new Action(event.getEventType(), bytes));
@@ -118,12 +124,14 @@ public class Connection extends Thread {
                         else {
                             playerController.rollDices();
                         }
+                        break;
                     }
                     case PURCHASE:{
                         if(server.getState() != Server.GAME){
                             outputStream.writeAction(new Action(SEND_ERROR));
                         }
                         playerController.purchaseField();
+                        break;
                     }
                     case LAY_DOWN:{
                         if(server.getState() != Server.GAME){
@@ -132,6 +140,7 @@ public class Connection extends Thread {
                         ByteBuffer buffer = ByteBuffer.wrap(action.getData());
                         int field = buffer.getInt();
                         playerController.mortgageField(gameSession.getGameMap().field(field));
+                        break;
                     }
                     case BUY_BACK:{
                         if(server.getState() != Server.GAME){
@@ -140,6 +149,7 @@ public class Connection extends Thread {
                         ByteBuffer buffer = ByteBuffer.wrap(action.getData());
                         int field = buffer.getInt();
                         playerController.unmortgageField(gameSession.getGameMap().field(field));
+                        break;
                     }
                     case BUILD:{
                         if(server.getState() != Server.GAME){
@@ -148,6 +158,7 @@ public class Connection extends Thread {
                         ByteBuffer buffer = ByteBuffer.wrap(action.getData());
                         int field = buffer.getInt();
                         playerController.build(gameSession.getGameMap().field(field));
+                        break;
                     }
                     case REMOVE:{
                         if(server.getState() != Server.GAME){
@@ -156,6 +167,7 @@ public class Connection extends Thread {
                         ByteBuffer buffer = ByteBuffer.wrap(action.getData());
                         int field = buffer.getInt();
                         playerController.remove(gameSession.getGameMap().field(field));
+                        break;
                     }
                 }
             }

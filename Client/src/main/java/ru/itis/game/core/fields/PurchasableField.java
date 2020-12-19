@@ -14,12 +14,12 @@ public abstract class PurchasableField extends MapField {
 
     }
 
-    public void mortgage(Player p){
-
+    public void mortgage(){
+        isMortgaged = true;
     }
 
-    public void unmortgage(Player p){
-
+    public void unmortgage(){
+        isMortgaged = false;
     }
 
     public abstract int getCost();
@@ -33,9 +33,10 @@ public abstract class PurchasableField extends MapField {
     }
 
     public void setOwner(Player owner) {
+        this.owner.removeField(this);
         this.owner = owner;
+        this.owner.addField(this);
     }
-
     public boolean isMortgaged() {
         return isMortgaged;
     }

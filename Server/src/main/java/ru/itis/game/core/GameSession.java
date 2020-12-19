@@ -165,6 +165,7 @@ public class GameSession {
                 if(current.getArrestTurns() == 3){
                     current.setArrested(false);
                     current.setArrestTurns(0);
+                    initEvent(new Event(current, Protocol.PRISON_RELEASE));
                 }
             }
         }
