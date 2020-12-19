@@ -11,8 +11,8 @@ public class StationField extends PurchasableField{
 
     //todo costs
     private static final int DEFAULT_COST = 200;
-    private static final int DEFAULT_MORTGAGE_COST = 200;
-    private static final int DEFAULT_UNMORTGAGE_COST = 200;
+    private static final int DEFAULT_MORTGAGE_COST = 100;
+    private static final int DEFAULT_UNMORTGAGE_COST = 110;
 
     public StationField(String name, GameSession session) {
         super(session);

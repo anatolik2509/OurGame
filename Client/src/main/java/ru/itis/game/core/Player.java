@@ -1,18 +1,16 @@
 package ru.itis.game.core;
 
 import ru.itis.game.core.fields.PurchasableField;
-import ru.itis.game.core.util.Event;
-import ru.itis.game.protocol.Protocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Player {
     private final int id;
     private int balance;
     private int character;
     private List<PurchasableField> domain;
-    private GameSession session;
     private boolean isArrested;
     private int arrestTurns;
     private int prisonReleases;
@@ -27,10 +25,9 @@ public class Player {
         character = -1;
     }
 
-    public Player(int character, int id, GameSession session, String nickname) {
+    public Player(int character, int id, String nickname) {
         this(id);
         this.character = character;
-        this.session = session;
         this.nickName = nickname;
     }
 
@@ -66,35 +63,12 @@ public class Player {
         prisonReleases++;
     }
 
-    public boolean useRelease() {
-        if (prisonReleases > 0) {
-            session.initEvent(new Event(this, Protocol.USE_PRISON_RELEASE));
-            arrestTurns = 0;
-            isArrested = false;
-            prisonReleases--;
-            return true;
-        }
-        return false;
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
-    public void receive(int money) {
-        balance += money;
-        session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
-    }
-
-    public boolean pay(int money) {
-        if (balance < money) {
-            return false;
-        } else {
-            balance -= money;
-            session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
-            return true;
-        }
-    }
-
-    public void takeAway(int money) {
-        balance -= money;
-        session.initEvent(new Event(this, Protocol.BALANCE_CHANGE, balance));
+    public void useRelease(){
+        prisonReleases--;
     }
 
     public void addField(PurchasableField field) {
@@ -121,10 +95,6 @@ public class Player {
         return id;
     }
 
-    public void setSession(GameSession session) {
-        this.session = session;
-    }
-
     public void setCharacter(int character) {
         this.character = character;
     }
@@ -137,5 +107,16 @@ public class Player {
         arrestTurns++;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return id == player.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

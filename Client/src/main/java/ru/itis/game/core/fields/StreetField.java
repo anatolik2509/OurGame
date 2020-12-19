@@ -1,10 +1,7 @@
 package ru.itis.game.core.fields;
 
-import ru.itis.game.core.GameSession;
+import ru.itis.game.client.Connection;
 import ru.itis.game.core.Player;
-import ru.itis.game.core.util.Event;
-import ru.itis.game.protocol.Protocol;
-
 import java.util.List;
 
 public class StreetField extends PurchasableField{
@@ -15,92 +12,17 @@ public class StreetField extends PurchasableField{
 
     private int buildCost;
 
-    public StreetField(Street street, GameSession session) {
-        super(session);
+    public StreetField(Street street) {
         this.street = street;
         level = 0;
     }
 
-    public boolean checkColors(Player p, int color){
-        StreetField streetField;
-        for(StreetField f : session.getGameMap().streetsByColor(color)){
-            if(f.getOwner() != p){
-                return false;
-            }
-        }
-        return true;
+    public void build(){
+        level++;
     }
 
-    public boolean build(Player p){
-        if (p != getOwner()){
-            return false;
-        }
-        if(!checkColors(p, getColor())) return false;
-        List<StreetField> fields = session.getGameMap().streetsByColor(getColor());
-        for(StreetField f : fields){
-            if(f.getLevel() < this.getLevel()){
-                return false;
-            }
-        }
-        if(level < 4){
-            if(p.pay(street.getBuildCost())){
-                level++;
-                session.initEvent(new Event(null, Protocol.BUILD_RESPONSE, session.getGameMap().fieldIndex(this)));
-                return true;
-            }
-        }
-        else if(level == 4) {
-            if(p.pay(street.getBuildCost() * 5)){
-                level++;
-                session.initEvent(new Event(null, Protocol.BUILD_RESPONSE, session.getGameMap().fieldIndex(this)));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean remove(Player p){
-        if (p != getOwner()){
-            return false;
-        }
-        if (level == 0) return false;
-        List<StreetField> fields = session.getGameMap().streetsByColor(getColor());
-        for(StreetField f : fields){
-            if(f.getLevel() > this.getLevel()){
-                return false;
-            }
-        }
-        if(level == 5){
-            p.receive(street.buildCost * 5 / 2);
-        }
-        else {
-            p.receive(street.buildCost / 2);
-        }
+    public void remove(){
         level--;
-        session.initEvent(new Event(null, Protocol.REMOVE_RESPONSE, session.getGameMap().fieldIndex(this)));
-        return true;
-
-    }
-
-    @Override
-    public void stop(Player p) {
-        if(p != getOwner() && getOwner() != null){
-            if(checkColors(getOwner(), getColor())){
-                if(level == 0){
-                    p.takeAway(street.rent[0] * 2);
-                    getOwner().receive(street.rent[0] * 2);
-                }
-                else {
-                    p.takeAway(street.rent[level]);
-                    getOwner().receive(street.rent[level]);
-                }
-            }
-            else {
-                p.takeAway(street.rent[0]);
-                getOwner().receive(street.rent[0]);
-            }
-            session.initEvent(new Event(p, Protocol.RENT, getOwner().getId()));
-        }
     }
 
     @Override
@@ -132,6 +54,10 @@ public class StreetField extends PurchasableField{
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getBuildCost() {
+        return buildCost;
     }
 
     private static final int BROWN = 0;

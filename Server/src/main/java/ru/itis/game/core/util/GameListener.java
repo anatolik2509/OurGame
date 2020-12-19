@@ -1,4 +1,5 @@
 package ru.itis.game.core.util;
 
-public class GameListener {
+public interface GameListener {
+    public void activate(Event event);
 }

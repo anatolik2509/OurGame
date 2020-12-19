@@ -17,7 +17,12 @@ public class RandomEventsField extends MapField{
 
     @Override
     public void stop(Player p) {
-        //todo
+        if(type == CHANCE){
+            session.getGameMap().chance(p);
+        }
+        if(type == COMMUNITY_CHEST){
+            session.getGameMap().communityChest(p);
+        }
     }
 
     public int getType() {
