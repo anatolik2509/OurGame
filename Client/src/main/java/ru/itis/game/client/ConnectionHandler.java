@@ -60,14 +60,17 @@ public class ConnectionHandler implements Runnable {
                     case ADD_PLAYER: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         connection.getPlayers().add(new Player(byteBuffer.getInt()));
+                        break;
                     }
                     case GAME_STARTED: {
                         connection.startGame();
+                        break;
                     }
                     case GO_TO_PRISON: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).setArrested(true);
+                        break;
                     }
                     case PUBLIC_TREASURY: {
                         //todo
@@ -81,41 +84,48 @@ public class ConnectionHandler implements Runnable {
                         Player p = connection.getGameMap().getPlayerById(id);
                         int money = byteBuffer.getInt();
                         p.setBalance(money);
+                        break;
                     }
                     case REMOVE_PLAYER: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.removePlayer(connection.getPlayerById(id));
+                        break;
                     }
                     case DICES_RESPONSE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         connection.getGameMap().setDice1(byteBuffer.getInt());
                         connection.getGameMap().setDice2(byteBuffer.getInt());
+                        break;
                     }
                     case PRISON_RELEASE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).setArrested(false);
+                        break;
                     }
                     case USE_PRISON_RELEASE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).useRelease();
+                        break;
                     }
                     case MOVE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         Player p = connection.getGameMap().getPlayerById(id);
                         connection.getGameMap().movePlayer(p,byteBuffer.getInt());
+                        break;
                     }
                     case GO_TO: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         Player p = connection.getGameMap().getPlayerById(id);
                         connection.getGameMap().moveDirectlyPlayer(p,byteBuffer.getInt());
+                        break;
                     }
                     case RENT: {
-
+                        break;
                     }
                     case SET_OWNER: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
@@ -126,6 +136,7 @@ public class ConnectionHandler implements Runnable {
                         if(f instanceof PurchasableField){
                             ((PurchasableField) f).setOwner(p);
                         }
+                        break;
                     }
                     case BUILD_RESPONSE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
@@ -134,6 +145,7 @@ public class ConnectionHandler implements Runnable {
                         if(f instanceof StreetField){
                             ((StreetField) f).build();
                         }
+                        break;
                     }
                     case REMOVE_RESPONSE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
@@ -142,6 +154,7 @@ public class ConnectionHandler implements Runnable {
                         if(f instanceof StreetField){
                             ((StreetField) f).remove();
                         }
+                        break;
                     }
                     case LAY_DOWN_RESPONSE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
@@ -150,6 +163,7 @@ public class ConnectionHandler implements Runnable {
                         if(f instanceof PurchasableField){
                             ((PurchasableField) f).mortgage();
                         }
+                        break;
                     }
                     case BUY_BACK_RESPONSE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
@@ -158,12 +172,17 @@ public class ConnectionHandler implements Runnable {
                         if(f instanceof StreetField){
                             ((StreetField) f).unmortgage();
                         }
+                        break;
                     }
                     case ADD_PRISON_RELEASE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         Player p = connection.getGameMap().getPlayerById(id);
                         p.addRelease();
+                        break;
+                    }
+                    case NEXT_TURN: {
+                        //todo
                     }
                 }
             }
