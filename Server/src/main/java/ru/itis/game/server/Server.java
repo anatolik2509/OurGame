@@ -101,6 +101,13 @@ public class Server {
             }
         }
         initEvent(new Event(null, Protocol.ADD_PLAYER, connectionNumber));
+        byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.putInt(connectionNumber);
+        try {
+            c.sendAction(new Action(Protocol.ADD_ID, byteBuffer.array()));
+        } catch (IOException e) {
+            removeConnection(c);
+        }
         connectionNumber++;
     }
 

@@ -42,6 +42,7 @@ public class Protocol {
     public static final byte BUY_BACK_RESPONSE = 38;
     public static final byte NEXT_TURN = 39;
     public static final byte ADD_PRISON_RELEASE = 40;
+    public static final byte ADD_ID = 41;
 
     public static final int MAX_ACTION_LENGTH = 255;
     public static final int PORT = 6666;
