@@ -14,15 +14,21 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage stage;
+
+    public static Stage getStage() {
+        return stage;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("game"));
-        stage.setMinWidth(1000);
-        stage.setMinHeight(660);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        this.stage = stage;
+        this.stage.setMinWidth(1000);
+        this.stage.setMinHeight(660);
+        this.stage.setScene(scene);
+        this.stage.setResizable(false);
+        this.stage.show();
     }
 
     static void setRoot(String fxml) throws IOException {

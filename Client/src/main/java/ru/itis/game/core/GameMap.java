@@ -21,14 +21,14 @@ public class GameMap {
         this.connection = connection;
         mapFields = new ArrayList<>();
         playersPositions = new HashMap<>();
-        for (Player p : players) {
-            if (p != null) {
-                playersPositions.put(p, 0);
-            }
-            if(p.getId() == playerId){
-                clientPlayer = p;
-            }
-        }
+//        for (Player p : players) {
+//            if (p != null) {
+//                playersPositions.put(p, 0);
+//            }
+//            if(p.getId() == playerId){
+//                clientPlayer = p;
+//            }
+//        }
         this.players = players;
         mapFields.add(new StartField());
         mapFields.add(new StreetField(StreetField.Street.RESIDENTIAL_STREET));
