@@ -19,6 +19,7 @@ public class Player {
     private String nickName;
 
     public Player(int id) {
+        this.nickName = "";
         this.id = id;
         balance = 2000;
         domain = new ArrayList<>();

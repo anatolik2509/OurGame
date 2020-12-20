@@ -19,7 +19,9 @@ public class Event {
         this.target = target;
         this.eventType = eventType;
         this.value = new byte[4];
-        ByteBuffer.allocate(4).putInt(value).get(this.value);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4).putInt(value);
+        byteBuffer.flip();
+        byteBuffer.get(this.value);
     }
 
     public Event(Player target, byte eventType, String value) {

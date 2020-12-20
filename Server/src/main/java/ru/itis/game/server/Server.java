@@ -38,7 +38,8 @@ public class Server {
     private GameEventManager manager;
 
     public Server() {
-        connectionNumber = STARTING;
+        state = STARTING;
+        connectionNumber = 0;
         manager = new GameEventManager();
         try {
             server = new ServerSocket(Protocol.PORT);
@@ -54,8 +55,10 @@ public class Server {
         while (true) {
             try {
                 Socket s = server.accept();
+                System.out.println(state);
                 if(state == STARTING) {
                     createConnection(s);
+                    System.out.println(s.getPort());;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -65,8 +68,6 @@ public class Server {
 
     public void createConnection(Socket socket){
         Connection c = new Connection(socket, this);
-        connections.add(c);
-        isReady.add(false);
         c.setPlayer(new Player(connectionNumber));
         c.start();
         Action connectAction;
@@ -108,6 +109,8 @@ public class Server {
         } catch (IOException e) {
             removeConnection(c);
         }
+        connections.add(c);
+        isReady.add(false);
         connectionNumber++;
     }
 
@@ -192,5 +195,10 @@ public class Server {
             }
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.start();
     }
 }

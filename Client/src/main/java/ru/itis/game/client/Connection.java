@@ -21,7 +21,7 @@ public class Connection {
     private List<Player> players;
     private GameMap gameMap;
     private boolean isReady;
-
+    private int clientPLayerId;
     public static final int STARTING = 1;
     public static final int GAME = 2;
 
@@ -34,6 +34,7 @@ public class Connection {
     }
     public Connection(InetAddress address, int port) {
         this.instance = this;
+        System.out.println(instance);
         isReady = false;
         players = new ArrayList<>();
         try {
@@ -51,7 +52,7 @@ public class Connection {
     }
 
     public void startGame(){
-        //todo
+        gameMap = new GameMap((Player[]) players.toArray(), this, clientPLayerId);
     }
 
     public List<Player> getPlayers() {
@@ -86,5 +87,9 @@ public class Connection {
     public void removePlayer(Player p){
         players.remove(p);
         getGameMap().removePlayer(p);
+    }
+
+    public void setClientPLayerId(int clientPLayerId) {
+        this.clientPLayerId = clientPLayerId;
     }
 }

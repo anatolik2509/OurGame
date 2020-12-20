@@ -11,6 +11,7 @@ import ru.itis.game.protocol.ProtocolOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static ru.itis.game.protocol.Protocol.*;
 
@@ -44,6 +45,7 @@ public class Connection extends Thread {
                     byteBuffer.putInt(event.getTarget().getId());
                 }
                 byteBuffer.put(event.getValue());
+                byteBuffer.flip();
                 byteBuffer.get(bytes);  
                 outputStream.writeAction(new Action(event.getEventType(), bytes));
             } catch (IOException e) {
@@ -57,6 +59,8 @@ public class Connection extends Thread {
         try {
             Action action;
             while ((action = inputStream.readAction()) != null){
+                System.out.println(player.getId() + " " + player.getNickName() + " "
+                        + action.getType() + " " + Arrays.toString(action.getData()));
                 switch (action.getType()){
                     case READY :{
                         if(server.getState() != Server.STARTING){
