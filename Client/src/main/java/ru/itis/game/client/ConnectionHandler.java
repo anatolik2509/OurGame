@@ -73,6 +73,8 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).setArrested(true);
+                        gameController.movePlayer(connection.getPlayerById(id),
+                                connection.getGameMap().getPrisonPosition());
                         break;
                     }
                     case PUBLIC_TREASURY: {
@@ -87,6 +89,7 @@ public class ConnectionHandler implements Runnable {
                         Player p = connection.getGameMap().getPlayerById(id);
                         int money = byteBuffer.getInt();
                         p.setBalance(money);
+                        gameController.changeBalance(money);
                         break;
                     }
                     case REMOVE_PLAYER: {
@@ -105,12 +108,18 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).setArrested(false);
+                        gameController.addSystemInfo("Игрок" +
+                                connection.getGameMap().getPlayerById(id).getNickName() +
+                                "выпущен из тюрьмы!");
                         break;
                     }
                     case USE_PRISON_RELEASE: {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         connection.getGameMap().getPlayerById(id).useRelease();
+                        gameController.addSystemInfo("Игрок" +
+                                connection.getGameMap().getPlayerById(id).getNickName() +
+                                "выпущен из тюрьмы!");
                         break;
                     }
                     case MOVE: {
@@ -126,7 +135,9 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         Player p = connection.getGameMap().getPlayerById(id);
-                        connection.getGameMap().moveDirectlyPlayer(p,byteBuffer.getInt());
+                        int position = byteBuffer.getInt();
+                        connection.getGameMap().moveDirectlyPlayer(p, position);
+                        gameController.goTo(connection.getGameMap().getPlayerById(id), position);
                         break;
                     }
                     case RENT: {
@@ -138,7 +149,7 @@ public class ConnectionHandler implements Runnable {
                         Player p = connection.getGameMap().getPlayerById(id);
                         int index = byteBuffer.getInt();
                         MapField f = connection.getGameMap().field(index);
-                        if(f instanceof PurchasableField){
+                        if (f instanceof PurchasableField) {
                             ((PurchasableField) f).setOwner(p);
                         }
                         break;
@@ -147,7 +158,7 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int index = byteBuffer.getInt();
                         MapField f = connection.getGameMap().field(index);
-                        if(f instanceof StreetField){
+                        if (f instanceof StreetField) {
                             ((StreetField) f).build();
                         }
                         break;
@@ -156,7 +167,7 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int index = byteBuffer.getInt();
                         MapField f = connection.getGameMap().field(index);
-                        if(f instanceof StreetField){
+                        if (f instanceof StreetField) {
                             ((StreetField) f).remove();
                         }
                         break;
@@ -165,7 +176,7 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int index = byteBuffer.getInt();
                         MapField f = connection.getGameMap().field(index);
-                        if(f instanceof PurchasableField){
+                        if (f instanceof PurchasableField) {
                             ((PurchasableField) f).mortgage();
                         }
                         break;
@@ -174,7 +185,7 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int index = byteBuffer.getInt();
                         MapField f = connection.getGameMap().field(index);
-                        if(f instanceof StreetField){
+                        if (f instanceof StreetField) {
                             ((StreetField) f).unmortgage();
                         }
                         break;
