@@ -29,4 +29,8 @@ public class UtilityField extends PurchasableField{
     public int getUnmortgageCost() {
         return 0;
     }
+
+    public String getName() {
+        return name;
+    }
 }
