@@ -22,10 +22,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("game"));
+        scene = new Scene(loadFXML("ready"));
         this.stage = stage;
         this.stage.setMinWidth(1000);
-        this.stage.setMinHeight(660);
+        this.stage.setMinHeight(680);
         this.stage.setScene(scene);
         this.stage.setResizable(false);
         this.stage.show();
