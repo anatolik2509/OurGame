@@ -5,21 +5,21 @@ import javafx.animation.Timeline;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import ru.itis.game.client.Connection;
 import ru.itis.game.core.GameMap;
 import ru.itis.game.core.Player;
-import ru.itis.game.core.fields.PurchasableField;
-import ru.itis.game.core.fields.StationField;
-import ru.itis.game.core.fields.StreetField;
-import ru.itis.game.core.fields.UtilityField;
+import ru.itis.game.core.fields.*;
 import ru.itis.game.protocol.Action;
 import ru.itis.game.protocol.Protocol;
 
@@ -38,6 +38,7 @@ public class GameController {
     private Map<Player, PlayerIcon> playerToPlayerIcon;
     private Map<Player, Integer> playerToPlayerPosition;
     private GameMap gameMapCore;
+    private Stage modalStage;
 
     public static GameController getInstance() {
         return instance;
@@ -80,6 +81,7 @@ public class GameController {
     @FXML
     private TableColumn<PropItem, Integer> clientPropPrices;
 
+    private Player p1;
     @FXML
     private void initialize() {
         instance = this;
@@ -90,6 +92,10 @@ public class GameController {
 //        addPlayersToMap(connection.getPlayers());
 //        setNickname(gameMapCore.getClientPlayer().getNickName());
 //        changeBalance(gameMapCore.getClientPlayer().getBalance());
+        gameMapCore = new GameMap(null, null, 0);
+        modalStage = new Stage();
+        modalStage.initOwner(App.getStage());
+        modalStage.initModality(Modality.APPLICATION_MODAL);
 
         clientPropColors.setCellValueFactory(new PropertyValueFactory<>("color"));
         clientPropTitles.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -97,7 +103,7 @@ public class GameController {
         clientPropPrices.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         List<Player> players = new ArrayList<>();
-        Player p1 = new Player(1, 1, "Adel");
+        p1 = new Player(1, 1, "Adel");
         Player p2 = new Player(2, 2, "Ruslan");
         Player p3 = new Player(3, 3, "Tolya");
         players.add(p1);
@@ -120,12 +126,47 @@ public class GameController {
     @FXML
     private void onDiceClick(MouseEvent event) {
 
-        try {
-            connection.writeAction(new Action(Protocol.ROLL_DICES));
-        } catch (IOException e) {
-            nicknameLabel.setText("Не получилось");
-            System.exit(-1);
+        movePlayer(p1, 6);
+
+//        try {
+//            connection.writeAction(new Action(Protocol.ROLL_DICES));
+//        } catch (IOException e) {
+//            nicknameLabel.setText("Не получилось");
+//            System.exit(-1);
+//        }
+    }
+
+    private void showModal(Scene sc) {
+        modalStage.setScene(sc);
+        modalStage.show();
+    }
+
+    public void showBuyModal(PurchasableField purchasableField) {
+        VBox content = new VBox();
+        Label titleLabel = new Label();
+        Label priceLabel = new Label();
+        Button acceptButton = new Button("Купить");
+        Button declineButton = new Button("Отклонить");
+
+        content.setAlignment(Pos.CENTER);
+
+        String title = "";
+
+        if (purchasableField instanceof StreetField) {
+            title = ((StreetField) purchasableField).getStreet().getName();
+        } else if (purchasableField instanceof StationField) {
+            title = ((StationField) purchasableField).getName();
+        } else if (purchasableField instanceof UtilityField) {
+            title = ((UtilityField) purchasableField).getName();
         }
+
+        titleLabel.setText(title);
+        priceLabel.setText(Integer.toString(purchasableField.getCost()));
+
+        content.getChildren().addAll(titleLabel, priceLabel, acceptButton, declineButton);
+
+        Scene scene = new Scene(content, 400, 400);
+        showModal(scene);
     }
 
     public void changeBalance(int balance) {
@@ -140,24 +181,32 @@ public class GameController {
         PlayerIcon currentPlayerIcon = playerToPlayerIcon.get(p);
         int currentPlayerPosition = playerToPlayerPosition.get(p);
 
+        MapField mapField = gameMapCore.getMapFields().get(currentPlayerPosition + steps);
+
         Timeline timeline = new Timeline();
         AtomicInteger i = new AtomicInteger();
         KeyFrame keyFrame = new KeyFrame(Duration.millis(750), event -> {
-            if (i.get() == steps) {
-                timeline.stop();
-            } else {
-                gameMap.getChildren().remove(currentPlayerIcon);
-                int[] gridCoords = calculateGridCoords(currentPlayerPosition + i.get() + 1);
-                gameMap.add(currentPlayerIcon, gridCoords[0], gridCoords[1]);
-                i.getAndIncrement();
-            }
+            gameMap.getChildren().remove(currentPlayerIcon);
+            int[] gridCoords = calculateGridCoords(currentPlayerPosition + i.get() + 1);
+            gameMap.add(currentPlayerIcon, gridCoords[0], gridCoords[1]);
+            i.getAndIncrement();
         });
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(steps);
         timeline.play();
 
+        timeline.setOnFinished(event -> {
+
+            if (mapField instanceof PurchasableField) {
+
+                showBuyModal((PurchasableField) mapField);
+            }
+
+        });
+
         playerToPlayerPosition.put(p, currentPlayerPosition + steps);
+
     }
 
     public void goTo(Player p, int position) {
@@ -181,7 +230,6 @@ public class GameController {
         if (pf instanceof StreetField) {
             StreetField sf = (StreetField) pf;
             propItem = new PropItem(getColorByCode(sf.getColor()), sf.getStreet().getName(), sf.getStreet().getRent()[sf.getLevel()], sf.getStreet().getCost());
-            System.out.println(propItem.toString());
         } else if (pf instanceof StationField) {
             StationField sf = (StationField) pf;
             propItem = new PropItem(getColorByCode(-1), sf.getName(), 50, sf.getCost());

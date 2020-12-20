@@ -1,5 +1,6 @@
 package ru.itis.game.client;
 
+import ru.itis.game.GameController;
 import ru.itis.game.core.Player;
 import ru.itis.game.core.fields.MapField;
 import ru.itis.game.core.fields.PurchasableField;
@@ -15,10 +16,12 @@ import static ru.itis.game.protocol.Protocol.*;
 public class ConnectionHandler implements Runnable {
     private ProtocolInputStream inputStream;
     private Connection connection;
+    private GameController gameController;
 
     public ConnectionHandler(Connection connection, ProtocolInputStream inputStream) {
         this.connection = connection;
         this.inputStream = inputStream;
+        this.gameController = GameController.getInstance();
     }
 
     @Override
@@ -114,7 +117,9 @@ public class ConnectionHandler implements Runnable {
                         ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
                         int id = byteBuffer.getInt();
                         Player p = connection.getGameMap().getPlayerById(id);
-                        connection.getGameMap().movePlayer(p,byteBuffer.getInt());
+                        int steps = byteBuffer.getInt();
+                        connection.getGameMap().movePlayer(p, steps);
+                        gameController.movePlayer(p, steps);
                         break;
                     }
                     case GO_TO: {
