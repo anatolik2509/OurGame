@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox minHeight="680.0" minWidth="1000.0" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.itis.game.ReadyController">
+<VBox fx:id="characterField" alignment="CENTER" minHeight="680.0" minWidth="1000.0" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.itis.game.ReadyController">
     <children>
+      <TextField fx:id="nameField" onAction="#enterName" promptText="Введите имя">
+         <VBox.margin>
+            <Insets left="300.0" right="300.0" />
+         </VBox.margin>
+      </TextField>
+      <TextField fx:id="setCharacterField" onAction="#setCharacter" promptText="Введите число от 1 до 6">
+         <VBox.margin>
+            <Insets left="300.0" right="300.0" />
+         </VBox.margin>
+      </TextField>
         <Button fx:id="secondaryButton" onAction="#readyClick" text="Готов" />
     </children>
     <padding>

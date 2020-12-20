@@ -1,5 +1,6 @@
 package ru.itis.game.client;
 
+import ru.itis.game.App;
 import ru.itis.game.GameController;
 import ru.itis.game.core.Player;
 import ru.itis.game.core.fields.MapField;
@@ -65,8 +66,14 @@ public class ConnectionHandler implements Runnable {
                         connection.getPlayers().add(new Player(byteBuffer.getInt()));
                         break;
                     }
+                    case  ADD_ID: {
+                        ByteBuffer byteBuffer = ByteBuffer.wrap(action.getData());
+                        connection.setClientPLayerId(byteBuffer.getInt());
+                        break;
+                    }
                     case GAME_STARTED: {
                         connection.startGame();
+                        App.setRoot("game");
                         break;
                     }
                     case GO_TO_PRISON: {

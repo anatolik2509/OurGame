@@ -126,14 +126,13 @@ public class GameController {
     @FXML
     private void onDiceClick(MouseEvent event) {
 
-        movePlayer(p1, 6);
-
-//        try {
-//            connection.writeAction(new Action(Protocol.ROLL_DICES));
-//        } catch (IOException e) {
-//            nicknameLabel.setText("Не получилось");
-//            System.exit(-1);
-//        }
+//        movePlayer(p1, 6);
+        try {
+            connection.writeAction(new Action(Protocol.ROLL_DICES));
+        } catch (IOException e) {
+            nicknameLabel.setText("Не получилось");
+            System.exit(-1);
+        }
     }
 
     private void showModal(Scene sc) {
