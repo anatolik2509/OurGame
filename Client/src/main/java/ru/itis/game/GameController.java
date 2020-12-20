@@ -328,7 +328,9 @@ public class GameController {
             Label label = new Label();
             label.setAlignment(Pos.CENTER);
 
-            button.setStyle("-fx-background-image: url(/images/player" + (p.getCharacter() - 1) + ".png); -fx-pref-width: 70px; -fx-pref-height: 70px; -fx-background-size: cover;");
+            button.setStyle(new StringBuilder().append("-fx-background-image: url(/images/player").
+                                                append(p.getCharacter() - 1).
+                                                append(".png); -fx-pref-width: 70px; -fx-pref-height: 70px; -fx-background-size: cover;").toString());
             label.setText(p.getNickName());
 
             getChildren().addAll(button, label);

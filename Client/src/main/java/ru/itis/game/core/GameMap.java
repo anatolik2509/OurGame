@@ -191,6 +191,10 @@ public class GameMap {
         return null;
     }
 
+    public Player getClientPlayer() {
+        return clientPlayer;
+    }
+
     public int getDice1() {
         return dice1;
     }

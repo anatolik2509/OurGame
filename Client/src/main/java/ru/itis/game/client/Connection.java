@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Connection {
+    private static Connection instance;
     private Socket socket;
     private ProtocolOutputStream outputStream;
     private ProtocolInputStream inputStream;
@@ -28,7 +29,11 @@ public class Connection {
         return gameMap;
     }
 
+    public static Connection getInstance() {
+        return instance;
+    }
     public Connection(InetAddress address, int port) {
+        this.instance = this;
         isReady = false;
         players = new ArrayList<>();
         try {
